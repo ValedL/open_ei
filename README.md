@@ -4,6 +4,18 @@
 
 Demo of LLM models' potential to serve as autonomous self-healing agents inside mission critical applications. 
 
+## SpawnFest 2023
+
+Developed during the [SpawnFest 2023](https://spawnfest.org/2023.html) under code name FluffyTrain.
+
+SpawnFest is an annual 48 hour online software development contest in whcih teams from around the world get exactly one weekend to create the best BEAM-based application.
+
+2nd place overall and distinguished in the following categories:
+ - 1st place creativity
+ - 1st place innovation
+ - 1st place correctness
+ - 3rd place completion
+
 ## Portal with Two Applications, Powered by OpenAI GPT-4
 
 <p align="center">
