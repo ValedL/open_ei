@@ -138,6 +138,14 @@ OpenSHI leverages OpenEI to provide runtime autonomous self-healing capabilities
 
 # Architecture
 
+The idea here is to have the agents deployed alongside the software components and monitor these components in real-time in order to fix issues autonomously.
+
+Below is the scehmatic representation of an application with autonomous self-healing agents deplyed alongside it.
+
+<p align="center">
+  <img src="priv/static/images/monitoring_stack.png" alt="Logical Diagram">
+</p>
+
 ## Logical Architecture
 
 <p align="center">
