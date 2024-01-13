@@ -55,6 +55,34 @@ SpawnFest is an annual 48 hour online software development contest in whcih team
   - Click the "Generate Exception" button, which will invoke code that has a division by 0.
   - Enjoy the show!!! :)
 
+```mermaid
+  sequenceDiagram
+    participant Application
+    participant OpenESHI
+    participant ContextRepo
+    participant OpenEI
+    participant RuntimeEvaluator
+
+    Application->>OpenESHI: Exception Thrown
+    activate OpenESHI
+    OpenESHI->>ContextRepo: Load relevant source code
+    ContextRepo-->>OpenESHI: Source code
+    OpenESHI->>OpenESHI: Generate a fix request
+    OpenESHI->>OpenEI: Send the request
+    activate OpenEI
+    loop Until Correct Solution
+        OpenEI->>OpenEI: Generate suggestion for a fix
+        OpenEI->>RuntimeEvaluator: Validate code using Code.eval_string
+        RuntimeEvaluator-->>OpenEI: Error feedback (if any)
+        OpenEI->>OpenEI: Validate solution
+    end
+    OpenEI-->>OpenESHI: Correct and validated solution
+    deactivate OpenEI
+    OpenESHI->>RuntimeEvaluator: Apply fix using Code.compile_string
+    RuntimeEvaluator-->>OpenESHI: Fix applied
+    deactivate OpenESHI
+```
+
 See sample run of both agents on the YouTube video below:
 <p align="center">
   <a href="https://youtu.be/PsaS_MtwgT0">
