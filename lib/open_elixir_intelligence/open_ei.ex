@@ -61,7 +61,6 @@ defmodule OpenElixirIntelligence.OpenEI do
   end
 
   def handle_cast(:cancel_generation, state) do
-    IO.inspect(state)
     pid = Map.get(state, :task_pid)
 
     if pid && Process.alive?(pid) do
@@ -175,15 +174,15 @@ defmodule OpenElixirIntelligence.OpenEI do
 
     if working_code != "" do
       Logger.info("Response has code blocks that show the final working solution")
-
-      Phoenix.PubSub.local_broadcast(
-        OpenElixirIntelligence.PubSub,
-        topic_successfull_solution(),
-        {:successfull_solution, response}
-      )
     else
       Logger.info("This response doesn't include the final working solution.")
     end
+
+    Phoenix.PubSub.local_broadcast(
+      OpenElixirIntelligence.PubSub,
+      topic_successfull_solution(),
+      {:successfull_solution, response}
+    )
   end
 
   def handle_info({:process_response, response}, state) do
@@ -201,8 +200,14 @@ defmodule OpenElixirIntelligence.OpenEI do
     {:noreply, state}
   end
 
-  def handle_info({:successfull_solution, _message}, state) do
+  def handle_info({:successfull_solution, message}, state) do
     # should be handle someplace else
+    Phoenix.PubSub.local_broadcast(
+      OpenElixirIntelligence.PubSub,
+      topic_successfull_solution(),
+      {:successfull_solution, message}
+    )
+
     {:noreply, state}
   end
 
