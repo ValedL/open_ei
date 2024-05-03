@@ -21,6 +21,8 @@ defmodule OpenElixirIntelligenceWeb.Router do
     live("/eai", OpenEAIPortal)
     live("/ei", OpenEIPortal)
     live("/", Portal)
+    live("/sum", ExampleSystemWeb.Math.Sum)
+    live("/load", ExampleSystemWeb.Load.Dashboard)
   end
 
   # Other scopes may use custom stacks.

@@ -1,0 +1,90 @@
+<div class="mainGrid">
+  <div class="loadGrid">
+    <form id="load-form" phx-submit="change_load" class="flex flex-col items-center justify-center space-x-2 space-y-2">
+      <input id="load-input" name="data[value]" class="py-3 px-4 rounded bg-grey shadow-inner w-64 focus:outline-none" type="number" autofocus: true />
+      <button type="submit" role="button">Change Load</button>
+    </form>
+
+    <div>jobs (<span phx-click="highlight_memory" class={highlight_class(@highlighted, "memory")}><%= @metrics.memory_usage %> MB</span>)</div>
+
+    <form id="schedulers-form" phx-submit="change_schedulers" class="flex flex-col items-center justify-center space-x-2 space-y-2">
+      <input id="schedulers-input" name="data[value]" class="py-3 px-4 rounded bg-grey shadow-inner w-64 focus:outline-none" type="number" autofocus: true />
+      <button type="submit" role="button">Change Schedulers</button>
+    </form>
+    <div>schedulers</div>
+  </div>
+
+  <input type="button" value="reset" phx-click="reset"/>
+
+<div class="chartsGrid">
+  <div phx-click="highlight_jobs_graph" class={highlight_class(@highlighted, "jobs_graph")}>
+    <svg viewBox={"0 0 #{graph_width() + 150} #{graph_height() + 150}"} height="500" class="chart">
+      <style>
+        .title { font-size: 30px;}
+      </style>
+
+      <g transform="translate(100, 100)">
+        <g stroke="black">
+          <text class="title" text-anchor="middle" dominant-baseline="central" x="300" y="-50" fill="black">
+            successful jobs/sec
+          </text>
+        </g>
+
+        <%= for legend <- @metrics.jobs_graph.legends do %>
+          <g stroke="black">
+            <text text-anchor="end" dominant-baseline="central" x="-20" y={y(legend.at)} fill="black">
+              <%= legend.title %>
+            </text>
+          </g>
+
+          <g stroke-width="1" stroke="gray" stroke-dasharray="4">
+            <line x1="0" x2={graph_width()} y1={y(legend.at)} y2={y(legend.at)}/>
+          </g>
+        <% end %>
+
+        <g stroke-width="2" stroke="black">
+          <line x1="0" x2="0" y1="0" y2={graph_height()}/>
+          <line x1="0" x2={graph_width()} y1={graph_height()} y2={graph_height()}/>
+        </g>
+
+        <polyline fill="none" stroke="#0074d9" stroke-width="2" points={data_points(@metrics.jobs_graph)}/>
+      </g>
+    </svg>
+  </div>
+
+  <div phx-click="highlight_scheduler_graph" class={highlight_class(@highlighted, "scheduler_graph")}>
+    <svg viewBox={"0 0 #{graph_width() + 150} #{graph_height() + 150}"} height="500" class="chart">
+      <style>
+        .title { font-size: 30px;}
+      </style>
+
+      <g transform="translate(100, 100)">
+        <g stroke="black">
+          <text class="title" text-anchor="middle" dominant-baseline="central" x="300" y="-50" fill="black">
+            scheduler usage
+          </text>
+        </g>
+
+        <%= for legend <- @metrics.scheduler_graph.legends do %>
+          <g stroke="black">
+            <text text-anchor="end" dominant-baseline="central" x="-20" y={y(legend.at)} fill="black">
+              <%= legend.title %>
+            </text>
+          </g>
+
+          <g stroke-width="1" stroke="gray" stroke-dasharray="4">
+            <line x1="0" x2={graph_width()} y1={y(legend.at)} y2={y(legend.at)}/>
+          </g>
+        <% end %>
+
+        <g stroke-width="2" stroke="black">
+          <line x1="0" x2="0" y1="0" y2={graph_height()}/>
+          <line x1="0" x2={graph_width()} y1={graph_height()} y2={graph_height()}/>
+        </g>
+
+        <polyline fill="none" stroke="#0074d9" stroke-width="2" points={data_points(@metrics.scheduler_graph)}/>
+      </g>
+    </svg>
+  </div>
+</div>
+</div>

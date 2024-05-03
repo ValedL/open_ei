@@ -1,0 +1,36 @@
+<svg viewBox="0 0 <%= graph_width() + 150 %> <%= graph_height() + 150 %>" height="500" class="chart">
+  <style>
+    .title { font-size: 30px;}
+  </style>
+
+  <g transform="translate(100, 100)">
+    <%# title %>
+    <g stroke="black">
+      <text class="title" text-anchor="middle" dominant-baseline="central" x="300" y="-50" fill="black">
+        <%= @title %>
+      </text>
+    </g>
+
+    <%# legends %>
+    <%= for legend <- @graph.legends do %>
+      <g stroke="black">
+        <text text-anchor="end" dominant-baseline="central" x="-20" y="<%= y(legend.at) %>" fill="black">
+          <%= legend.title %>
+        </text>
+      </g>
+
+      <g stroke-width="1" stroke="gray" stroke-dasharray="4">
+        <line x1="0" x2="<%= graph_width() %>" y1="<%= y(legend.at) %>" y2="<%= y(legend.at) %>"/>
+      </g>
+    <% end %>
+
+    <%# axes %>
+    <g stroke-width="2" stroke="black">
+      <line x1="0" x2="0" y1="0" y2="<%= graph_height() %>"/>
+      <line x1="0" x2="<%= graph_width() %>" y1="<%= graph_height() %>" y2="<%= graph_height() %>"/>
+    </g>
+
+    <%# data points %>
+    <polyline fill="none" stroke="#0074d9" stroke-width="2" points="<%= data_points(@graph) %>"/>
+  </g>
+</svg>

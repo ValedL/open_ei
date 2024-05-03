@@ -1,0 +1,13 @@
+<div class="sumForm">
+  <form id="sum-form" phx-submit="submit" class="flex flex-col items-center justify-center space-x-2 space-y-2">
+    <input id="number-input" name="data[to]" class="py-3 px-4 rounded bg-grey shadow-inner w-64 focus:outline-none" type="number" placeholder="Enter a number" />
+    <button type="submit" role="button">Submit</button>
+  </form>
+  <br/>
+
+  <div>
+    <%= for operation <- @operations do %>
+      <div>∑(1..<%= operation.input %>) = <%= operation.result %></div>
+    <% end %>
+  </div>
+</div>

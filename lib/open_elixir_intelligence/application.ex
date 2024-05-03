@@ -7,6 +7,8 @@ defmodule OpenElixirIntelligence.Application do
 
   @impl true
   def start(_type, _args) do
+    LoadControl.change_schedulers(1)
+
     children = [
       # Start the Telemetry supervisor
       OpenElixirIntelligenceWeb.Telemetry,
@@ -20,13 +22,23 @@ defmodule OpenElixirIntelligence.Application do
       OpenElixirIntelligence.OpenEAI,
       OpenElixirIntelligence.VeryBadCode,
       ExUnit.Server,
-      ExUnit.CaptureServer
+      ExUnit.CaptureServer,
+      ExampleSystem.Math,
+      ExampleSystem.Metrics,
+      ExampleSystem.Service,
+      ExampleSystem.Top
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: OpenElixirIntelligence.Supervisor]
-    Supervisor.start_link(children, opts)
+
+    with {:ok, pid} <-
+           Supervisor.start_link(children, opts) do
+      LoadControl.change_load(0)
+
+      {:ok, pid}
+    end
   end
 
   # Tell Phoenix to update the endpoint configuration
