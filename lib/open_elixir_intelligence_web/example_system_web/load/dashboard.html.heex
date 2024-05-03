@@ -1,14 +1,14 @@
 <div class="mainGrid">
   <div class="loadGrid">
     <form id="load-form" phx-submit="change_load" class="flex flex-col items-center justify-center space-x-2 space-y-2">
-      <input id="load-input" name="data[value]" class="py-3 px-4 rounded bg-grey shadow-inner w-64 focus:outline-none" type="number" autofocus: true />
+      <input id="load-input" name="data[value]" value={Ecto.Changeset.get_field(@load, :value)} class="py-3 px-4 rounded bg-grey shadow-inner w-64 focus:outline-none" type="number" />
       <button type="submit" role="button">Change Load</button>
     </form>
 
     <div>jobs (<span phx-click="highlight_memory" class={highlight_class(@highlighted, "memory")}><%= @metrics.memory_usage %> MB</span>)</div>
 
     <form id="schedulers-form" phx-submit="change_schedulers" class="flex flex-col items-center justify-center space-x-2 space-y-2">
-      <input id="schedulers-input" name="data[value]" class="py-3 px-4 rounded bg-grey shadow-inner w-64 focus:outline-none" type="number" autofocus: true />
+      <input id="schedulers-input" name="data[value]" value={Ecto.Changeset.get_field(@schedulers, :value)} class="py-3 px-4 rounded bg-grey shadow-inner w-64 focus:outline-none" type="number" />
       <button type="submit" role="button">Change Schedulers</button>
     </form>
     <div>schedulers</div>

@@ -63,6 +63,10 @@ defmodule OpenElixirIntelligenceWeb.ExampleSystemWeb.Load.Dashboard do
 
   def handle_info({:metrics, metrics}, socket), do: {:noreply, assign(socket, :metrics, metrics)}
 
+  def handle_info({:metrics, metrics}, socket) when is_map(metrics) do
+    {:noreply, assign(socket, :metrics, metrics)}
+  end
+
   def handle_info(:clear_history, socket) do
     ExampleSystem.Metrics.clear_history()
 

@@ -51,7 +51,8 @@ defmodule OpenElixirIntelligence.MixProject do
       {:petal_components, "~> 1.0"},
       {:logger_backends, "~> 1.0.0"},
       {:load_control, path: "lib/load_control"},
-      {:parent, "~> 0.12.1"}
+      {:parent, "~> 0.12.1"},
+      {:swarm, "~> 3.0"}
     ]
   end
 

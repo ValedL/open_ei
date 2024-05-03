@@ -1,6 +1,8 @@
 defmodule LoadControl do
   use GenServer, start: {__MODULE__, :start_link, []}
 
+  require Logger
+
   def start_link(), do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
 
   def load(), do: get_value(:current_load)
@@ -35,9 +37,20 @@ defmodule LoadControl do
 
   def workers_count(), do: get_value(:workers_count)
 
-  def change_schedulers(schedulers) do
-    :erlang.system_flag(:schedulers_online, schedulers)
-    :erlang.system_flag(:dirty_cpu_schedulers_online, schedulers)
+  def change_schedulers(desired_schedulers) do
+    total_schedulers = :erlang.system_info(:schedulers)
+
+    if desired_schedulers <= total_schedulers do
+      :erlang.system_flag(:schedulers_online, desired_schedulers)
+      :erlang.system_flag(:dirty_cpu_schedulers_online, desired_schedulers)
+    else
+      Logger.error(
+        "Desired number of schedulers: #{desired_schedulers} exceeds the total number of schedulers: #{total_schedulers}"
+      )
+
+      {:error,
+       "Desired number of schedulers: #{desired_schedulers} exceeds the total number of schedulers: #{total_schedulers}"}
+    end
   end
 
   def init(_) do
@@ -53,7 +66,8 @@ defmodule LoadControl do
     value
   end
 
-  defp set_value(key, value), do: :rpc.multicall(all_nodes(), :ets, :insert, [__MODULE__, {key, value}], :infinity)
+  defp set_value(key, value),
+    do: :rpc.multicall(all_nodes(), :ets, :insert, [__MODULE__, {key, value}], :infinity)
 
   defp all_nodes(), do: Node.list([:this, :visible])
 
