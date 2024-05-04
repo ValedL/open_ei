@@ -14,7 +14,11 @@ defmodule OpenElixirIntelligence.TextExtractor do
       "#SOURCE" => extract_between_tags(text, "#SOURCE"),
       "#LINE" => extract_between_tags(text, "#LINE"),
       "#DESCRIPTION" => extract_between_tags(text, "#DESCRIPTION"),
-      "#TIMESTAMP" => extract_between_tags(text, "#TIMESTAMP")
+      "#TIMESTAMP" => extract_between_tags(text, "#TIMESTAMP"),
+      "#POSSIBLE_ISSUES" => extract_between_tags(text, "#POSSIBLE_ISSUES"),
+      "#POSSIBLE_SOLUTIONS" => extract_between_tags(text, "#POSSIBLE_SOLUTIONS"),
+      "#BEST_SOLUTION" => extract_between_tags(text, "#BEST_SOLUTION"),
+      "#TEST" => extract_between_tags(text, "#TEST")
     }
   end
 
@@ -44,15 +48,19 @@ defmodule OpenElixirIntelligence.TextExtractor do
       prev_content = Enum.at(parts, 1)
 
       if prev_content do
-        prev_content
-        |> String.replace("'''elixir", "")
-        |> String.replace("```", "")
-        |> String.trim()
+        clean_string(prev_content)
       else
         ""
       end
     else
       ""
     end
+  end
+
+  def clean_string(content) do
+    content
+    |> String.replace("'''elixir", "")
+    |> String.replace("```", "")
+    |> String.trim()
   end
 end

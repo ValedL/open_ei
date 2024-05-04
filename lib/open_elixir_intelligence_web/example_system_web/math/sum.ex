@@ -1,6 +1,6 @@
 defmodule OpenElixirIntelligenceWeb.ExampleSystemWeb.Math.Sum do
   use OpenElixirIntelligenceWeb, :live_view
-  alias OpenElixirIntelligence
+  alias OpenElixirIntelligence.ExampleSystem
   require Logger
 
   @impl Phoenix.LiveView

@@ -23,7 +23,7 @@ defmodule OpenElixirIntelligence.Application do
       OpenElixirIntelligence.VeryBadCode,
       ExUnit.Server,
       ExUnit.CaptureServer,
-      ExampleSystem.Math,
+      OpenElixirIntelligence.ExampleSystem.Math,
       ExampleSystem.Metrics,
       ExampleSystem.Service,
       ExampleSystem.Top

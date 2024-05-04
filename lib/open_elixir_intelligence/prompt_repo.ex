@@ -21,10 +21,9 @@ defmodule OpenElixirIntelligence.PromptRepo do
 
     DO NOT USE '''elixir and '''' TO WRAP THE SAMPLE CODE YOU PRODUCE!
 
+    DO NOT CHANGE THE SIGNATURE AND ARITY OF THE PUBLIC FUNCTIONS IN THE CODE YOU PROVIDE!
+
     In ALL response provide full code, example, and output.
-    IMPORTANT: If the code requires external dependency (like OTP, supervision tree, asyn task, etc),
-    provide code that can be tested in isolation but that is part of the relevant module. Ie put the logic in a separate function that can be tested
-    without OTP, supervision tree, etc., but the same function with the logic is called from the main function that uses OTP, supervision tree, etc.
 
     Sample interaction between user and you:
 
@@ -67,19 +66,21 @@ defmodule OpenElixirIntelligence.PromptRepo do
   - Human readable timestamp, surrounded with #TIMESTAMP tag
 
   Investigate the error, identify the cause, and provide a solution by following the following steps:
-  1. List all possible issues that could cause the error, surrounded with #POSSIBLE_ISSUES tag. Stop for user response.
-  2. Provide a description of the fix required, surrounded with #POSSIBLE_SOLUTIONS tag. Stop for user response.
-  3. For all possible solutions, describe how to test that solution is correct, surrounded with #TEST tag. Stop for user response.
+  1. List all possible issues that could cause the error, surrounded with #POSSIBLE_ISSUES tag.
+  2. Provide a description of the fix required, surrounded with #POSSIBLE_SOLUTIONS tag.
+  3. Choose the best solution and describe why it is the best solution, surrounded with #BEST_SOLUTION tag.
+  3. For the best solution, describe how to test that solution is correct, surrounded with #TEST tag.
 
 
-  The above information will be sent to an agent that will produce a description of the fix required.
+  The above information will be sent to an agent that will produce a description of the fix required. Wait for the solution to be provided.
+
   The message with solution will include tag #SOLUTION_SUCCESS.
-  Take the source code of the solution, and change the only the lines necessary for the fix.
+  Take the source code of the solution, and change in the original source code only the lines necessary for the fix.
   Output the fixed source code wrapped with tags #FIXED_SOURCE_CODE.
 
   Example:
 
-  You receive the following message:
+  User:
   Timestamp: {{2023, 10, 29}, {19, 38, 52, 574}}
   Error Message: Task #PID<0.549.0> started from OpenElixirIntelligence.VeryBadCode terminating
   ** (ArithmeticError) bad argument in arithmetic expression
@@ -88,7 +89,7 @@ defmodule OpenElixirIntelligence.PromptRepo do
   Function: #Function<0.83140575/0 in OpenElixirIntelligence.VeryBadCode.handle_info/2>
   Args: []
 
-  You respond with:
+  You:
 
   #SOURCE
   lib/fluffy_train/divide_by_zero.ex
@@ -106,7 +107,7 @@ defmodule OpenElixirIntelligence.PromptRepo do
   October 29, 2023 19:38:52.574 GMT
   #TIMESTAMP
 
-  You will receive working solution:
+  Agent:
 
   #SOLUTION_SUCCESS
   #SOLUTION_SUCCESS

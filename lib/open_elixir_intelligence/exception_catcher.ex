@@ -10,11 +10,10 @@ defmodule OpenElixirIntelligence.ExceptionCatcher do
       when is_list(metadata) do
     timestamp_string = "Timestamp: \n" <> "#{inspect(timestamp)}"
     error_string = "Error Message: \n" <> "#{message}"
-    # file = OpenElixirIntelligence.ContextRepo.find_file_with_error("#{message}")
-    # context = "Context for #{file}: \n" <> OpenElixirIntelligence.ContextRepo.get_context(file)
+    file = OpenElixirIntelligence.ContextRepo.find_file_with_error("#{message}")
+    context = "Context for #{file}: \n" <> OpenElixirIntelligence.ContextRepo.get_context(file)
 
-    # <> "\n" <> context
-    message_to_send = timestamp_string <> "\n" <> error_string
+    message_to_send = timestamp_string <> "\n" <> error_string <> "\n" <> context
 
     Phoenix.PubSub.local_broadcast(
       OpenElixirIntelligence.PubSub,

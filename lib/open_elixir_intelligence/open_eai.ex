@@ -222,12 +222,30 @@ defmodule OpenElixirIntelligence.OpenEAI do
     line = result["#LINE"]
     description = result["#DESCRIPTION"]
     timestamp = result["#TIMESTAMP"]
+    possible_issues = result["#POSSIBLE_ISSUES"]
+    possible_solutions = result["#POSSIBLE_SOLUTIONS"]
+    best_solution = result["#BEST_SOLUTION"]
+    test = result["#TEST"]
 
     if source != "" do
       Logger.info("Response has error details that require a fix")
-      create_user_fix_code_request(source, line, description, timestamp, state)
+
+      create_user_fix_code_request(
+        source,
+        line,
+        description,
+        timestamp,
+        possible_issues,
+        possible_solutions,
+        best_solution,
+        test,
+        state
+      )
+
+      true
     else
       Logger.info("Response doesn't have error details that require a fix")
+      false
     end
   end
 
@@ -238,7 +256,17 @@ defmodule OpenElixirIntelligence.OpenEAI do
     context
   end
 
-  defp create_user_fix_code_request(source, line, description, timestamp, state) do
+  defp create_user_fix_code_request(
+         source,
+         line,
+         description,
+         timestamp,
+         possible_issues,
+         possible_solutions,
+         best_solution,
+         test,
+         state
+       ) do
     Logger.info("Generating a message")
     context = get_context(source, state)
 
@@ -263,11 +291,24 @@ defmodule OpenElixirIntelligence.OpenEAI do
         "\n" <>
         runtime_data <>
         "\n" <>
+        "Possible issues: \n" <>
+        possible_issues <>
+        "\n" <>
+        "Possible solutions: \n" <>
+        possible_solutions <>
+        "\n" <>
+        "Best solution: \n" <>
+        best_solution <>
+        "\n" <>
+        "Test: \n" <>
+        test <>
+        "\n" <>
         """
-        what's the issue? list all options. then fix following the below guidelines:
-        expose the fixed logic as a public function thatcan be tested  from outside the module
-        make sure the public function can beexecuted without OTP, task async, agent, etc from iex
-        it shall be possible to hotreload the original code and it should work
+        review and then fix following the below guidelines:
+        1. expose the fixed logic as a public function that can be tested  from outside the module
+        2. make sure the public function can be executed without OTP, task async, agent, etc from iex
+        3. it shall be possible to hotreload the original code and it should work
+
         show full code
         """
 
@@ -288,8 +329,10 @@ defmodule OpenElixirIntelligence.OpenEAI do
     if code != "" do
       Logger.info("Response has code blocks that require evaluation")
       send(self(), {:evaluate_code, code, example, output})
+      true
     else
       Logger.info("Response doesn't have code blocks that require evaluation")
+      false
     end
   end
 

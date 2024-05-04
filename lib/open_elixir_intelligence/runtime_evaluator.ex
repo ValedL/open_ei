@@ -1,6 +1,7 @@
 defmodule OpenElixirIntelligence.RuntimeEvaluator do
   require Logger
   alias ExUnit.CaptureIO
+  alias OpenElixirIntelligence.TextExtractor
 
   def evaluate(code) do
     # Initialize the agent with an empty map
@@ -10,7 +11,7 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
     warnings =
       CaptureIO.capture_io(:stderr, fn ->
         try do
-          {result, output} = Code.eval_string(code)
+          {result, output} = Code.eval_string(TextExtractor.clean_string(code))
           # Store the result in the agent
           Agent.update(agent, fn _ -> %{evaluation: {result, output}, error: ""} end)
         catch
@@ -53,11 +54,12 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
   end
 
   def apply_hotreload_fix(source_code) do
-    {result, _output} = Code.eval_string(source_code)
+    clean_source_code = OpenElixirIntelligence.TextExtractor.clean_string(source_code)
+    {result, _output} = Code.eval_string(clean_source_code)
 
     case result do
       {{:module, module_name, _binary, _tuple}, _list} ->
-        case Code.compile_string(source_code, to_string(module_name)) do
+        case Code.compile_string(clean_source_code, to_string(module_name)) do
           [{_module, module_binary}] ->
             reload_code(module_name, module_binary)
 
@@ -66,7 +68,7 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
         end
 
       {:module, module_name, _binary, _tuple} ->
-        case Code.compile_string(source_code, to_string(module_name)) do
+        case Code.compile_string(clean_source_code, to_string(module_name)) do
           [{_module, module_binary}] ->
             reload_code(module_name, module_binary)
 

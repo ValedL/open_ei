@@ -163,6 +163,9 @@ defmodule OpenElixirIntelligence.OpenEI do
     if code != "" do
       Logger.info("Response has code blocks that require evaluation")
       send(self(), {:evaluate_code, code, example, output})
+      true
+    else
+      false
     end
   end
 
@@ -181,15 +184,36 @@ defmodule OpenElixirIntelligence.OpenEI do
         topic_successfull_solution(),
         {:successfull_solution, response}
       )
+
+      true
     else
       Logger.info("This response doesn't include the final working solution.")
+      false
     end
+  end
+
+  def send_user_message(message) do
+    Phoenix.PubSub.local_broadcast(
+      OpenElixirIntelligence.PubSub,
+      topic_user_message(),
+      {:user_message, message}
+    )
   end
 
   def handle_info({:process_response, response}, state) do
     state = append_message(:assistant, response, state)
-    is_code_validation_required(response)
-    is_it_final_solution(response)
+    res1 = is_code_validation_required(response)
+    res2 = is_it_final_solution(response)
+
+    if not res1 and not res2 do
+      message = """
+      The response doesn't include any code blocks that require evaluation.
+      The response doesn't include the final working solution.
+      """
+
+      send_user_message(message)
+    end
+
     extracted_state = TextExtractor.extract_state(response)
     Logger.warning("Extracted state: #{extracted_state}")
     {:noreply, state}
