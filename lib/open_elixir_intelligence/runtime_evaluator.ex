@@ -168,7 +168,10 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
   end
 
   def monitor_cpu_usage() do
-    Task.start(fn -> loop() end)
+    Task.start(fn ->
+      Process.flag(:priority, :max)
+      loop()
+    end)
   end
 
   defp loop() do
@@ -177,10 +180,10 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
     Process.sleep(3000)
     t3_top_process = hd(Runtime.top())
 
-    if t0_top_process.cpu == 99 and t3_top_process.cpu == 99 and
-         t0_top_process.pid == t3_top_process.pid do
-      Logger.info("Process #{inspect(t0_top_process.pid)} is consuming 99% CPU for 3 seconds.")
-      message = "Process #{inspect(t0_top_process.pid)} is consuming 99% CPU."
+    if t0_top_process.pid == t3_top_process.pid and
+         t0_top_process.cpu >= 95 and t3_top_process.cpu >= 95 do
+      Logger.info("Process #{inspect(t0_top_process.pid)} is consuming high CPU for 3 seconds.")
+      message = "Process #{inspect(t0_top_process.pid)} is consuming high CPU."
       stacktrace = get_stacktrace(t0_top_process.pid)
       trace = get_trace(t0_top_process.pid)
       Logger.error(message <> "\n" <> stacktrace <> "\n" <> trace)
