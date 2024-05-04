@@ -1,10 +1,22 @@
 defmodule OpenElixirIntelligence.ContextRepo do
+  use Agent
   require Logger
 
   @file_list Path.wildcard("lib/**/*.ex")
 
+  def start_link(_opts) do
+    Agent.start_link(fn -> %{} end, name: __MODULE__)
+  end
+
   def get_file_list do
     @file_list
+  end
+
+  def save_updated_code(module_name, source_code) do
+    Agent.update(__MODULE__, fn context ->
+      Map.put(context, module_name, source_code)
+      Logger.info("Updated context for module: #{module_name}")
+    end)
   end
 
   def extract_module_names(file_list) do

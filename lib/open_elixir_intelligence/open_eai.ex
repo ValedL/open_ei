@@ -309,7 +309,7 @@ defmodule OpenElixirIntelligence.OpenEAI do
         1. Expose the fixed logic as a public function that can be tested  from outside the module
         2. Make sure the public function can be executed without OTP, task async, agent, etc from iex
         3. It shall be possible to hotreload the original code and it should work
-        4.
+        4. Don't forget that laguage is Elixir
 
         show full code
         """
@@ -400,6 +400,19 @@ defmodule OpenElixirIntelligence.OpenEAI do
 
   def handle_info({:successfull_solution, message}, state) do
     state = append_message(:user, message, state)
+    # Broadcast the message to the response stream
+    Phoenix.PubSub.local_broadcast(
+      OpenElixirIntelligence.PubSub,
+      topic_response_stream(),
+      {:new_response, ""}
+    )
+
+    Phoenix.PubSub.local_broadcast(
+      OpenElixirIntelligence.PubSub,
+      topic_response_stream(),
+      {:new_content, message}
+    )
+
     state = get_response(state)
     {:noreply, state}
   end

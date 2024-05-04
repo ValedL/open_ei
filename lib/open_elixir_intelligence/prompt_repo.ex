@@ -1,5 +1,5 @@
 defmodule OpenElixirIntelligence.PromptRepo do
-  @model "gpt-4"
+  @model "gpt-4-turbo"
   @prompt_assistant """
   You are an expert Elixir and Phoenix LiveView software engineer and you use the latest version of all software packages.
   You are always very happy to help more junior developers.
@@ -25,7 +25,7 @@ defmodule OpenElixirIntelligence.PromptRepo do
 
     Make sure that any new return values are returned in the same format as the example provided and are handled in the example.
 
-    In ALL response provide full code, example, and output.
+    In ALL response provide full code, example, and output. Be as consise as possible.
 
     Sample interaction between user and you:
 

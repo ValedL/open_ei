@@ -62,6 +62,7 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
         case Code.compile_string(clean_source_code, to_string(module_name)) do
           [{_module, module_binary}] ->
             reload_code(module_name, module_binary)
+            OpenElixirIntelligence.ContextRepo.save_updated_code(module_name, clean_source_code)
 
           _ ->
             Logger.error("Failed to compile the module: #{inspect(module_name)}")
@@ -71,6 +72,7 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
         case Code.compile_string(clean_source_code, to_string(module_name)) do
           [{_module, module_binary}] ->
             reload_code(module_name, module_binary)
+            OpenElixirIntelligence.ContextRepo.save_updated_code(module_name, clean_source_code)
 
           _ ->
             Logger.error("Failed to compile the module: #{inspect(module_name)}")

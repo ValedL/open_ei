@@ -10,6 +10,7 @@ defmodule OpenElixirIntelligence.Application do
     LoadControl.change_schedulers(1)
 
     children = [
+      OpenElixirIntelligence.ContextRepo,
       # Start the Telemetry supervisor
       OpenElixirIntelligenceWeb.Telemetry,
       # Start the PubSub system
