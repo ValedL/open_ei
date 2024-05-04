@@ -1,4 +1,4 @@
-defmodule ExampleSystem.Math do
+defmodule OpenElixirIntelligence.ExampleSystem.Math do
   def child_spec(_),
     do: Supervisor.child_spec(Task.Supervisor.child_spec(name: __MODULE__), id: __MODULE__)
 

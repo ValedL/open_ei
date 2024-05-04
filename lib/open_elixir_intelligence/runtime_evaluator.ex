@@ -52,9 +52,51 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
     end
   end
 
-  def apply_hotreload_fix(fixed_code) do
-    # Need some error checking here, but no time left in the hackaton :)
-    Code.compile_string(fixed_code)
+  def apply_hotreload_fix(source_code) do
+    {result, _output} = Code.eval_string(source_code)
+
+    case result do
+      {{:module, module_name, _binary, _tuple}, _list} ->
+        case Code.compile_string(source_code, to_string(module_name)) do
+          [{_module, module_binary}] ->
+            reload_code(module_name, module_binary)
+
+          _ ->
+            Logger.error("Failed to compile the module: #{inspect(module_name)}")
+        end
+
+      {:module, module_name, _binary, _tuple} ->
+        case Code.compile_string(source_code, to_string(module_name)) do
+          [{_module, module_binary}] ->
+            reload_code(module_name, module_binary)
+
+          _ ->
+            Logger.error("Failed to compile the module: #{inspect(module_name)}")
+        end
+
+      _ ->
+        Logger.error("No module defined in the source code.")
+    end
+  end
+
+  defp reload_code(module_name, module_binary) do
+    case :code.purge(module_name) do
+      true ->
+        :code.load_binary(module_name, ~c"nofile", module_binary)
+
+      false ->
+        Logger.warning(
+          "Failed to purge the old version of #{module_name}. Trying to delete and load again."
+        )
+
+        try do
+          :code.delete(module_name)
+          :code.load_binary(module_name, ~c"nofile", module_binary)
+        rescue
+          e ->
+            Logger.error(Exception.format(:error, e, __STACKTRACE__))
+        end
+    end
   end
 
   def evaluate_and_construct_message(code, example, output) do
@@ -107,5 +149,19 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
         "vs the expected result: " <> output <> "\n"
 
     example_evaluation_message
+  end
+
+  def get_runtime_data() do
+    top = Runtime.top()
+    pid = hd(Runtime.top()).pid
+    info = Process.info(pid, :current_stacktrace)
+    trace = Runtime.trace(pid)
+
+    runtime_data_string =
+      "Top PIDs by CPU usage: #{inspect(top)}" <>
+        "Stacktrace of processes with highest CPU usage: #{inspect(info)}\n" <>
+        "Trace of the process with the hughest CPU usage:  #{inspect(trace)}\n"
+
+    runtime_data_string
   end
 end

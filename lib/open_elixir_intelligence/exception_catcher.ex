@@ -8,10 +8,13 @@ defmodule OpenElixirIntelligence.ExceptionCatcher do
 
   def handle_event({:error, _group_leader, {Logger, message, timestamp, metadata}}, state)
       when is_list(metadata) do
-    timestamp_string = "Timestamp: " <> "#{inspect(timestamp)}"
-    error_string = "Error Message: " <> "#{message}"
+    timestamp_string = "Timestamp: \n" <> "#{inspect(timestamp)}"
+    error_string = "Error Message: \n" <> "#{message}"
+    # file = OpenElixirIntelligence.ContextRepo.find_file_with_error("#{message}")
+    # context = "Context for #{file}: \n" <> OpenElixirIntelligence.ContextRepo.get_context(file)
 
-    message_to_send = timestamp_string <> "\n" <> error_string <> "\n"
+    # <> "\n" <> context
+    message_to_send = timestamp_string <> "\n" <> error_string
 
     Phoenix.PubSub.local_broadcast(
       OpenElixirIntelligence.PubSub,

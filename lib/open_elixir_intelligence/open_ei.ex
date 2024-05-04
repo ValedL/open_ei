@@ -61,7 +61,7 @@ defmodule OpenElixirIntelligence.OpenEI do
   end
 
   def handle_cast(:cancel_generation, state) do
-    IO.inspect(state)
+    # IO.inspect(state)
     pid = Map.get(state, :task_pid)
 
     if pid && Process.alive?(pid) do
@@ -190,6 +190,8 @@ defmodule OpenElixirIntelligence.OpenEI do
     state = append_message(:assistant, response, state)
     is_code_validation_required(response)
     is_it_final_solution(response)
+    extracted_state = TextExtractor.extract_state(response)
+    Logger.warning("Extracted state: #{extracted_state}")
     {:noreply, state}
   end
 

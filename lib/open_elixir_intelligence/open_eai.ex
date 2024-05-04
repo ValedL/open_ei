@@ -49,7 +49,7 @@ defmodule OpenElixirIntelligence.OpenEAI do
       OpenElixirIntelligence.OpenEI.topic_successfull_solution()
     )
 
-    IO.inspect(state)
+    # IO.inspect(state)
 
     state
   end
@@ -232,9 +232,9 @@ defmodule OpenElixirIntelligence.OpenEAI do
   end
 
   defp get_context(source, state) do
-    Logger.info("Loading context")
+    Logger.info("Loading context for source: #{source}")
     context_repo = Map.get(state, :context)
-    context = Map.get(context_repo, source, "No source file in the context repo found")
+    context = Map.get(context_repo, source, "No source file in the context repo found\n")
     context
   end
 
@@ -242,8 +242,14 @@ defmodule OpenElixirIntelligence.OpenEAI do
     Logger.info("Generating a message")
     context = get_context(source, state)
 
+    # OpenElixirIntelligence.RuntimeEvaluator.get_runtime_data()
+    runtime_data = ""
+
     fix_code_request_message =
-      context <>
+      "Context: \n" <>
+        context <>
+        "\n" <>
+        "#STATE FIX #STATE \n" <>
         "My application has encountered the following error: \n" <>
         "On " <>
         timestamp <>
@@ -255,7 +261,15 @@ defmodule OpenElixirIntelligence.OpenEAI do
         "Description: \n" <>
         description <>
         "\n" <>
-        "How can I fix the issue? Provde complete code that can be executed via Code.compile to hotload the fix."
+        runtime_data <>
+        "\n" <>
+        """
+        what's the issue? list all options. then fix following the below guidelines:
+        expose the fixed logic as a public function thatcan be tested  from outside the module
+        make sure the public function can beexecuted without OTP, task async, agent, etc from iex
+        it shall be possible to hotreload the original code and it should work
+        show full code
+        """
 
     Phoenix.PubSub.local_broadcast(
       OpenElixirIntelligence.PubSub,

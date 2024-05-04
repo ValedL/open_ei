@@ -1,4 +1,6 @@
 defmodule OpenElixirIntelligence.TextExtractor do
+  require Logger
+
   def extract(text) do
     %{
       "#CODE" => extract_between_tags(text, "#CODE"),
@@ -30,7 +32,13 @@ defmodule OpenElixirIntelligence.TextExtractor do
     }
   end
 
-  defp extract_between_tags(text, tag) do
+  def extract_state(text) do
+    state = extract_between_tags(text, "#STATE")
+    Logger.info("Extracted state: #{state}")
+    state
+  end
+
+  def extract_between_tags(text, tag) do
     if String.contains?(text, tag) do
       parts = String.split(text, tag) |> Enum.reverse()
       prev_content = Enum.at(parts, 1)
