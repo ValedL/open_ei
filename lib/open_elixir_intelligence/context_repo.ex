@@ -13,9 +13,33 @@ defmodule OpenElixirIntelligence.ContextRepo do
   end
 
   def save_updated_code(module_name, source_code) do
+    # Convert module_name to string and remove "Elixir." prefix
+    module_name = Atom.to_string(module_name)
+    module_name = String.replace(module_name, "Elixir.", "")
+
     Agent.update(__MODULE__, fn context ->
-      Map.put(context, module_name, source_code)
+      module_file_pairs = extract_module_names(get_file_list())
+      file = Map.get(module_file_pairs, module_name)
+
+      updated_context =
+        context
+        |> Map.put(:by_module, Map.put(context[:by_module] || %{}, module_name, source_code))
+        |> Map.put(:by_file, Map.put(context[:by_file] || %{}, file, source_code))
+
       Logger.info("Updated context for module: #{module_name}")
+      updated_context
+    end)
+  end
+
+  def get_updated_code_by_module(module_name) do
+    Agent.get(__MODULE__, fn context ->
+      Map.get(context[:by_module] || %{}, module_name, nil)
+    end)
+  end
+
+  def get_updated_code_by_file(file) do
+    Agent.get(__MODULE__, fn context ->
+      Map.get(context[:by_file] || %{}, file, nil)
     end)
   end
 

@@ -1,5 +1,5 @@
 defmodule OpenElixirIntelligence.PromptRepo do
-  @model "gpt-4-turbo"
+  @model "gpt-4"
   @prompt_assistant """
   You are an expert Elixir and Phoenix LiveView software engineer and you use the latest version of all software packages.
   You are always very happy to help more junior developers.
