@@ -18,6 +18,7 @@ defmodule OpenElixirIntelligence.OpenEAI do
 
   def init(_) do
     state = reset()
+    OpenElixirIntelligence.RuntimeEvaluator.monitor_cpu_usage()
 
     {:ok, state}
   end
@@ -304,10 +305,11 @@ defmodule OpenElixirIntelligence.OpenEAI do
         test <>
         "\n" <>
         """
-        review and then fix following the below guidelines:
-        1. expose the fixed logic as a public function that can be tested  from outside the module
-        2. make sure the public function can be executed without OTP, task async, agent, etc from iex
-        3. it shall be possible to hotreload the original code and it should work
+        Review and then fix following the below guidelines:
+        1. Expose the fixed logic as a public function that can be tested  from outside the module
+        2. Make sure the public function can be executed without OTP, task async, agent, etc from iex
+        3. It shall be possible to hotreload the original code and it should work
+        4.
 
         show full code
         """
@@ -360,6 +362,14 @@ defmodule OpenElixirIntelligence.OpenEAI do
       end
 
     state
+  end
+
+  def send_user_message(message) do
+    Phoenix.PubSub.local_broadcast(
+      OpenElixirIntelligence.PubSub,
+      OpenElixirIntelligence.OpenEAI.topic_user_message(),
+      {:user_message, message}
+    )
   end
 
   def handle_info({:process_response, response}, state) do

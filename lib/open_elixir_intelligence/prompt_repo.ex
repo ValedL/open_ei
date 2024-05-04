@@ -23,6 +23,8 @@ defmodule OpenElixirIntelligence.PromptRepo do
 
     DO NOT CHANGE THE SIGNATURE AND ARITY OF THE PUBLIC FUNCTIONS IN THE CODE YOU PROVIDE!
 
+    Make sure that any new return values are returned in the same format as the example provided and are handled in the example.
+
     In ALL response provide full code, example, and output.
 
     Sample interaction between user and you:
@@ -64,6 +66,11 @@ defmodule OpenElixirIntelligence.PromptRepo do
   - Line where exception has originated at, surrounded by #LINE tag
   - Short description of the error, surrounded with #DESCRIPTION tag
   - Human readable timestamp, surrounded with #TIMESTAMP tag
+
+  If trace and stacktrace are provided:
+  - Function where the error has originated, surrounded by #FUNCTION tag
+  - Arguments passed to the function where the error has originated, surrounded by #ARGS tag
+  - The sequence of function calls leading to the error, surrounded by #TRACE tag
 
   Investigate the error, identify the cause, and provide a solution by following the following steps:
   1. List all possible issues that could cause the error, surrounded with #POSSIBLE_ISSUES tag.

@@ -166,4 +166,39 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
 
     runtime_data_string
   end
+
+  def monitor_cpu_usage() do
+    Task.start(fn -> loop() end)
+  end
+
+  defp loop() do
+    t0_top_process = hd(Runtime.top())
+    # Sleep for 3 seconds
+    Process.sleep(3000)
+    t3_top_process = hd(Runtime.top())
+
+    if t0_top_process.cpu == 99 and t3_top_process.cpu == 99 and
+         t0_top_process.pid == t3_top_process.pid do
+      Logger.info("Process #{inspect(t0_top_process.pid)} is consuming 99% CPU for 3 seconds.")
+      message = "Process #{inspect(t0_top_process.pid)} is consuming 99% CPU."
+      stacktrace = get_stacktrace(t0_top_process.pid)
+      trace = get_trace(t0_top_process.pid)
+      Logger.error(message <> "\n" <> stacktrace <> "\n" <> trace)
+    else
+      loop()
+    end
+  end
+
+  def get_stacktrace(pid) do
+    stacktrace = Process.info(pid, :current_stacktrace)
+    "#{inspect(stacktrace)}"
+  end
+
+  def get_trace(pid) do
+    trace =
+      Runtime.trace(pid)
+      |> Enum.take(10)
+
+    "#{inspect(trace)}"
+  end
 end
