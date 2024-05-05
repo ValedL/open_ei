@@ -78,7 +78,6 @@ defmodule OpenElixirIntelligence.PromptRepo do
   3. Choose the best solution and describe why it is the best solution, surrounded with #BEST_SOLUTION tag.
   3. For the best solution, describe how to test that solution is correct, surrounded with #TEST tag.
 
-
   The above information will be sent to an agent that will produce a description of the fix required. Wait for the solution to be provided.
 
   The message with solution will include tag #SOLUTION_SUCCESS.

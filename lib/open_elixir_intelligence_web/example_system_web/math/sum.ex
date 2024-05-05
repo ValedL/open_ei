@@ -38,8 +38,13 @@ defmodule OpenElixirIntelligenceWeb.ExampleSystemWeb.Math.Sum do
   end
 
   defp do_start_sum(input) do
-    {:ok, pid} = ExampleSystem.Math.sum(input)
-    %{pid: pid, input: input, result: :calculating}
+    case ExampleSystem.Math.sum(input) do
+      {:ok, pid} ->
+        %{pid: pid, input: input, result: :calculating}
+
+      {:error, reason} ->
+        %{pid: nil, input: input, result: reason}
+    end
   end
 
   defp set_result(operations, pid, result) do

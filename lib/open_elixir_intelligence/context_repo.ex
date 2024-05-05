@@ -111,8 +111,15 @@ defmodule OpenElixirIntelligence.ContextRepo do
   def get_context(file) do
     if file do
       Logger.info("Loading context for source: #{file}")
-      context_repo = load_context()
-      Map.get(context_repo, file, "No source file in the context repo found\n")
+
+      updated_code = get_updated_code_by_file(file)
+
+      if is_nil(updated_code) do
+        context_repo = load_context()
+        Map.get(context_repo, file, "No source file in the context repo found\n")
+      else
+        updated_code
+      end
     else
       "No source file in the context repo found\n"
     end

@@ -17,19 +17,25 @@ defmodule OpenElixirIntelligence.OpenEAI do
   end
 
   def init(_) do
-    state = reset()
-    OpenElixirIntelligence.RuntimeEvaluator.monitor_cpu_usage()
-
+    # Initialize your state here
+    initial_state = %{}
+    state = reset(initial_state)
     {:ok, state}
   end
 
-  defp reset() do
+  defp reset(state) do
     apikey = System.fetch_env!("OPENAI_API_KEY")
     openai = OpenaiEx.new(apikey)
     model_type = PromptRepo.model()
     system = PromptRepo.prompt_fixer()
 
-    state = %{
+    pid = Map.get(state, :pid)
+
+    if pid do
+      Process.exit(pid, :kill)
+    end
+
+    new_state = %{
       is_agent_on: false,
       status: "OFF",
       is_wip: false,
@@ -40,6 +46,7 @@ defmodule OpenElixirIntelligence.OpenEAI do
       system: system,
       messages: [%{role: "system", content: system}],
       processed_messages: %{},
+      pid: OpenElixirIntelligence.RuntimeEvaluator.monitor_cpu_usage(),
       context: OpenElixirIntelligence.ContextRepo.load_context()
     }
 
@@ -50,9 +57,7 @@ defmodule OpenElixirIntelligence.OpenEAI do
       OpenElixirIntelligence.OpenEI.topic_successfull_solution()
     )
 
-    # IO.inspect(state)
-
-    state
+    new_state
   end
 
   def reset_state do
@@ -79,8 +84,8 @@ defmodule OpenElixirIntelligence.OpenEAI do
     GenServer.cast(__MODULE__, :cancel_generation)
   end
 
-  def handle_cast(:reset_state, _state) do
-    {:noreply, reset()}
+  def handle_cast(:reset_state, state) do
+    {:noreply, reset(state)}
   end
 
   def handle_cast(:cancel_generation, state) do
@@ -92,7 +97,7 @@ defmodule OpenElixirIntelligence.OpenEAI do
       Logger.warning("Task is already dead.")
     end
 
-    {:noreply, reset()}
+    {:noreply, reset(state)}
   end
 
   def handle_call(:get_raw_messages, _from, state) do
@@ -310,6 +315,7 @@ defmodule OpenElixirIntelligence.OpenEAI do
         2. Make sure the public function can be executed without OTP, task async, agent, etc from iex
         3. It shall be possible to hotreload the original code and it should work
         4. Don't forget that laguage is Elixir
+        5. All errors should be handled gracefully (ie no raising exceptions, etc.)
 
         show full code
         """
