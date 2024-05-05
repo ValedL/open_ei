@@ -5,13 +5,37 @@ defmodule OpenElixirIntelligenceWeb.ExampleSystemWeb.Math.Sum do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    Logger.info("ExampleSystemWeb.Math.Sum mount")
-    {:ok, assign(socket, operations: [], data: data())}
+    Logger.info("Subscribe to summaries")
+
+    Phoenix.PubSub.subscribe(
+      OpenElixirIntelligence.PubSub,
+      OpenElixirIntelligence.SummaryAgent.topic_response_stream()
+    )
+
+    {:ok, assign(socket, operations: [], data: data(), responses: %{})}
   end
 
   @impl Phoenix.LiveView
   def handle_event("submit", %{"data" => %{"to" => str_input}}, socket),
     do: {:noreply, start_sum(socket, str_input)}
+
+  def handle_info({:final_response, final_response, from}, socket) do
+    IO.puts("Received final response: #{final_response} from #{from}")
+
+    timestamp = current_time()
+
+    updated_responses =
+      Map.put(socket.assigns[:responses] || %{}, {timestamp, from}, final_response)
+
+    {:noreply, assign(socket, :responses, updated_responses)}
+  end
+
+  defp current_time do
+    Timex.format!(DateTime.utc_now(), "%H:%M:%S", :strftime)
+  end
+
+  def handle_info({:new_content, _content}, state), do: {:noreply, state}
+  def handle_info({:new_response, _response}, state), do: {:noreply, state}
 
   @impl Phoenix.LiveView
   def handle_info({:sum, pid, sum}, socket),

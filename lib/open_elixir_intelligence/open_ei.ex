@@ -202,6 +202,7 @@ defmodule OpenElixirIntelligence.OpenEI do
   end
 
   def handle_info({:process_response, response}, state) do
+    OpenElixirIntelligence.SummaryAgent.summarize(response, "EI")
     state = append_message(:assistant, response, state)
     res1 = is_code_validation_required(response)
     res2 = is_it_final_solution(response)
@@ -225,6 +226,7 @@ defmodule OpenElixirIntelligence.OpenEI do
 
   def handle_info({:user_message, message}, state) do
     Logger.info("User message: #{inspect(message)}")
+    OpenElixirIntelligence.SummaryAgent.summarize(message, "EI")
     state = append_message(:user, message, state)
     state = get_response(state)
 

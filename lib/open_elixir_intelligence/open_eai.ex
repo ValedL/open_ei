@@ -383,6 +383,7 @@ defmodule OpenElixirIntelligence.OpenEAI do
   end
 
   def handle_info({:process_response, response}, state) do
+    OpenElixirIntelligence.SummaryAgent.summarize(response, "EAI")
     state = append_message(:assistant, response, state)
     is_code_validation_required(response)
     is_fix_required(response, state)
@@ -399,6 +400,7 @@ defmodule OpenElixirIntelligence.OpenEAI do
 
     state = Map.put(state, :is_wip, true)
     state = append_message(:user, message, state)
+    OpenElixirIntelligence.SummaryAgent.summarize(message, "EAI")
     state = get_response(state)
     # state
     # end

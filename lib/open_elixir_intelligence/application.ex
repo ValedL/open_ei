@@ -21,6 +21,7 @@ defmodule OpenElixirIntelligence.Application do
       OpenElixirIntelligenceWeb.Endpoint,
       OpenElixirIntelligence.OpenEI,
       OpenElixirIntelligence.OpenEAI,
+      OpenElixirIntelligence.SummaryAgent,
       OpenElixirIntelligence.VeryBadCode,
       ExUnit.Server,
       ExUnit.CaptureServer,

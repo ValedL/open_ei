@@ -52,7 +52,8 @@ defmodule OpenElixirIntelligence.MixProject do
       {:logger_backends, "~> 1.0.0"},
       {:load_control, path: "assets/load_control"},
       {:parent, "~> 0.12.1"},
-      {:swarm, "~> 3.0"}
+      {:swarm, "~> 3.0"},
+      {:timex, "~> 3.7.11"}
     ]
   end
 

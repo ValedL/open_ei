@@ -92,6 +92,6 @@ defmodule OpenElixirIntelligenceWeb.ExampleSystemWeb.Load.Dashboard do
   def x(relative_x), do: min(round(relative_x * graph_width()), graph_width())
   def y(relative_y), do: graph_height() - min(round(relative_y * graph_height()), graph_height())
 
-  def graph_width(), do: 600
-  def graph_height(), do: 500
+  def graph_width(), do: 150
+  def graph_height(), do: 150
 end

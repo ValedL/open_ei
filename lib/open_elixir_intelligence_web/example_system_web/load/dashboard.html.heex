@@ -1,21 +1,25 @@
 <div class="mainGrid">
   <div class="loadGrid">
-    <form id="load-form" phx-submit="change_load" class="flex flex-col items-center justify-center space-x-2 space-y-2">
-      <input id="load-input" name="data[value]" value={Ecto.Changeset.get_field(@load, :value)} class="py-3 px-4 rounded bg-grey shadow-inner w-64 focus:outline-none" type="number" />
-      <button type="submit" role="button">Change Load</button>
-    </form>
+    <div class="flex flex-col justify-center space-y-4">
+      <div class="flex items-center space-x-2">
+        <form id="load-form" phx-submit="change_load" class="flex flex-col items-center justify-center space-x-2 space-y-2">
+          <input id="load-input" name="data[value]" value={Ecto.Changeset.get_field(@load, :value)} class="py-3 px-4 rounded bg-grey shadow-inner w-64 focus:outline-none" type="number" />
+        </form>
+        <div>jobs (<span phx-click="highlight_memory" class={highlight_class(@highlighted, "memory")}><%= @metrics.memory_usage %> MB</span>)</div>
+      </div>
 
-    <div>jobs (<span phx-click="highlight_memory" class={highlight_class(@highlighted, "memory")}><%= @metrics.memory_usage %> MB</span>)</div>
-
-    <form id="schedulers-form" phx-submit="change_schedulers" class="flex flex-col items-center justify-center space-x-2 space-y-2">
-      <input id="schedulers-input" name="data[value]" value={Ecto.Changeset.get_field(@schedulers, :value)} class="py-3 px-4 rounded bg-grey shadow-inner w-64 focus:outline-none" type="number" />
-      <button type="submit" role="button">Change Schedulers</button>
-    </form>
-    <div>schedulers</div>
+      <div class="flex items-center space-x-2">
+        <form id="schedulers-form" phx-submit="change_schedulers" class="flex flex-col items-center justify-center space-x-2 space-y-2">
+          <input id="schedulers-input" name="data[value]" value={Ecto.Changeset.get_field(@schedulers, :value)} class="py-3 px-4 rounded bg-grey shadow-inner w-64 focus:outline-none" type="number" />
+        </form>
+        <div>schedulers</div>
+      </div>
+    </div>
   </div>
 
-  <input type="button" value="reset" phx-click="reset"/>
-
+  <button phx-click="reset" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+    Reset
+  </button>
 <div class="chartsGrid">
   <div phx-click="highlight_jobs_graph" class={highlight_class(@highlighted, "jobs_graph")}>
     <svg viewBox={"0 0 #{graph_width() + 150} #{graph_height() + 150}"} height="500" class="chart">
@@ -25,7 +29,7 @@
 
       <g transform="translate(100, 100)">
         <g stroke="black">
-          <text class="title" text-anchor="middle" dominant-baseline="central" x="300" y="-50" fill="black">
+          <text class="text-sm" text-anchor="middle" dominant-baseline="central" x="120" y="-50" fill="black">
             successful jobs/sec
           </text>
         </g>
@@ -60,7 +64,7 @@
 
       <g transform="translate(100, 100)">
         <g stroke="black">
-          <text class="title" text-anchor="middle" dominant-baseline="central" x="300" y="-50" fill="black">
+          <text class="text-sm" text-anchor="middle" dominant-baseline="central" x="120" y="-50" fill="black">
             scheduler usage
           </text>
         </g>

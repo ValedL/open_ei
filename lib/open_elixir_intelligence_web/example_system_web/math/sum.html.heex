@@ -10,4 +10,23 @@
       <div>∑(1..<%= operation.input %>) = <%= operation.result %></div>
     <% end %>
   </div>
+
+<table class="table-auto">
+  <thead>
+    <tr>
+      <th class="px-4 py-2 text-sm">Timestamp</th>
+      <th class="px-4 py-2 text-sm">From</th>
+      <th class="px-4 py-2 text-sm">Message</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for {{timestamp, from}, message} <- @responses do %>
+      <tr class={if(from == "EI", do: "bg-blue-100", else: if(from == "EAI", do: "bg-green-100"))}>
+        <td class="border px-4 py-2 text-sm"><%= timestamp %></td>
+        <td class="border px-4 py-2 text-sm"><%= from %></td>
+        <td class="border px-4 py-2 text-sm"><%= message %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 </div>
