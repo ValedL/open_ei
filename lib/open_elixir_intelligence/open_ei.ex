@@ -35,6 +35,7 @@ defmodule OpenElixirIntelligence.OpenEI do
       apikey: apikey,
       openai: openai,
       model_type: model_type,
+      is_wip: false,
       task_pid: nil,
       system: system,
       messages: [%{role: "system", content: system}],
@@ -204,6 +205,9 @@ defmodule OpenElixirIntelligence.OpenEI do
     state = append_message(:assistant, response, state)
     res1 = is_code_validation_required(response)
     res2 = is_it_final_solution(response)
+
+    # extract is_wip from state
+    is_wip = Map.get(state, :is_wip)
 
     if not res1 and not res2 do
       message = """

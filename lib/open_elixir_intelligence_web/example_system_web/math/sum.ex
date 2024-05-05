@@ -49,8 +49,17 @@ defmodule OpenElixirIntelligenceWeb.ExampleSystemWeb.Math.Sum do
 
   defp set_result(operations, pid, result) do
     case Enum.split_with(operations, &match?(%{pid: ^pid, result: :calculating}, &1)) do
-      {[operation], rest} -> [%{operation | result: result} | rest]
-      _other -> operations
+      {[operation], rest} ->
+        result_string =
+          case result do
+            {:error, reason} -> "Error: #{reason}"
+            _ -> result
+          end
+
+        [%{operation | result: result_string} | rest]
+
+      _other ->
+        operations
     end
   end
 
