@@ -116,7 +116,7 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
 
   defp evaluate_code(code) do
     %{error: code_errors, warnings: code_warnings, evaluation: code_evaluation} =
-      evaluate(code)
+      evaluate(TextExtractor.clean_string(code))
 
     code_evaluation_message =
       if code_errors != "" or code_warnings != "" do
@@ -133,7 +133,7 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
 
   defp evaluate_example(example, output) do
     %{error: example_errors, warnings: example_warnings, evaluation: example_evaluation} =
-      evaluate(example)
+      evaluate(TextExtractor.clean_string(example))
 
     example_evaluation_message =
       if example_errors != "" or example_warnings != "" do
@@ -170,6 +170,8 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
   end
 
   def monitor_cpu_usage() do
+    Logger.warning("Spinning up task to monitor CPU usage.")
+
     Task.start(fn ->
       Process.flag(:priority, :max)
       loop()

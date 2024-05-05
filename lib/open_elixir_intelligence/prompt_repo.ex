@@ -27,6 +27,15 @@ defmodule OpenElixirIntelligence.PromptRepo do
 
     In ALL response provide full code, example, and output. Be as consise as possible.
 
+    Here's how to fix OpenElixirIntelligenceWeb.ExampleSystemWeb.Math.Sum:
+    - In Elixir recursion is preferred over loops.
+    - Arithmetic sum is n * ((n+1) / 2).
+    - 13 is a valid input, no need to thow error.
+    - calc_sum return signature can be one of the two: integer or {:error, reason}.
+      - defp calc_sum(from, to, acc_sum) when from > to, do: acc_sum
+      - defp calc_sum(from, from, sum), do: sum + from
+      - defp calc_sum(from, to, acc_sum), do: calc_sum(from + 1, to, acc_sum + from)
+
     Sample interaction between user and you:
 
     User: How to reverse a list of numbers in Elixir?

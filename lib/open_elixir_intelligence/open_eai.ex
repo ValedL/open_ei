@@ -24,6 +24,7 @@ defmodule OpenElixirIntelligence.OpenEAI do
   end
 
   defp reset(state) do
+    Logger.warning("Resetting the state")
     apikey = System.fetch_env!("OPENAI_API_KEY")
     openai = OpenaiEx.new(apikey)
     model_type = PromptRepo.model()
@@ -32,6 +33,7 @@ defmodule OpenElixirIntelligence.OpenEAI do
     pid = Map.get(state, :pid)
 
     if pid do
+      Logger.warning("Killing the previous CPU monitoring process")
       Process.exit(pid, :kill)
     end
 
@@ -315,7 +317,9 @@ defmodule OpenElixirIntelligence.OpenEAI do
         2. Make sure the public function can be executed without OTP, task async, agent, etc from iex
         3. It shall be possible to hotreload the original code and it should work
         4. Don't forget that laguage is Elixir
-        5. All errors should be handled gracefully (ie no raising exceptions, etc.)
+        5. All errors should be handled gracefully (ie DO NOT raise exceptions)
+        6. Return values for errors should be {:error, reason} with reason being a string
+        7. Do not change return signature of existing public functions and don't send any new messages to processes
 
         show full code
         """
