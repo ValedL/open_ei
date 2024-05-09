@@ -59,7 +59,7 @@ defmodule OpenElixirIntelligence.TextExtractor do
 
   def clean_string(content) do
     content
-    |> String.replace("'''elixir", "")
+    |> String.replace("```elixir", "")
     |> String.replace("```", "")
     |> String.trim()
   end

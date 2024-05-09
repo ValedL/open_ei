@@ -41,8 +41,10 @@ defmodule OpenElixirIntelligenceWeb.ExampleSystemWeb.Math.Sum do
   def handle_info({:sum, pid, sum}, socket),
     do: {:noreply, update(socket, :operations, &set_result(&1, pid, sum))}
 
-  def handle_info({:DOWN, _ref, :process, pid, _reason}, socket),
-    do: {:noreply, update(socket, :operations, &set_result(&1, pid, :error))}
+  def handle_info({:DOWN, _ref, :process, pid, reason}, socket) do
+    Logger.warning("Process #{inspect(pid)} died with reason: #{inspect(reason)}")
+    {:noreply, update(socket, :operations, &set_result(&1, pid, :error))}
+  end
 
   defp start_sum(socket, str_input) do
     operation =

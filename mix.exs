@@ -53,7 +53,8 @@ defmodule OpenElixirIntelligence.MixProject do
       {:load_control, path: "assets/load_control"},
       {:parent, "~> 0.12.1"},
       {:swarm, "~> 3.0"},
-      {:timex, "~> 3.7.11"}
+      {:timex, "~> 3.7.11"},
+      {:earmark, "~> 1.4"}
     ]
   end
 

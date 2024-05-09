@@ -83,7 +83,10 @@ defmodule OpenElixirIntelligenceWeb.OpenEIPortal do
 
   def render(assigns) do
     ~H"""
-    <div class="container mt-4 w-full pb-32 flex"> <!-- Added padding-bottom to make space for the floating form -->
+    <div
+    id="open_ei_portal"
+    phx-hook="ScrollToScreenBottom"
+    class="container mt-4 w-full pb-32 flex"> <!-- Added padding-bottom to make space for the floating form -->
       <div class="w-1/4 flex flex-col items-center fixed" style="top: 10%; left: 5%;">
         <img src="/images/Logo_Concept_2.png" class="object-cover h-41 w-41">
         <.button color="info" label="New Chat" variant="shadow" phx-click="new_chat" class="top-60 m-4 z-50"/>
@@ -94,7 +97,7 @@ defmodule OpenElixirIntelligenceWeb.OpenEIPortal do
           <.card class="mt-4 ">
             <.card_content category={role} class={"max-w-full #{if role == "user", do: "bg-gray-600 bg-opacity-60", else: "bg-blue-600 bg-opacity-20"}"}>
               <div class="whitespace-pre-line">
-                <%= content %>
+              <%= Earmark.as_html!(content) |> raw() %>
               </div>
             </.card_content>
           </.card>

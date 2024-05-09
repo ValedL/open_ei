@@ -34,7 +34,8 @@ defmodule OpenElixirIntelligence.RuntimeEvaluator do
   end
 
   def remove_module_if_present(code_evaluation) do
-    # Need to remove the module, otherwise a warning is generated because next run will overwrite the current module
+    # Need to remove the module, otherwise a warning is generated
+    # because next run will overwrite the current module
     case code_evaluation do
       {{:module, module_name, _binary, _tuple}, _list} ->
         remove_module(module_name)
